@@ -1,0 +1,53 @@
+# This is a basic workflow to help you get started with Actions
+
+name: metrics.groupdocs.app-live
+
+# Controls when the action will run. 
+on:
+  workflow_dispatch:
+  # Scheduled trigger
+  schedule:
+    - cron: '59 */3 * * *'
+  
+  #push:
+    #branches: [ live ]
+    #paths: [ 'content/aspose-com-v2/**' ]
+  #pull_request:
+  #  branches: [ main1 ]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+            repository: groupdocs-app-metrics/groupdocs-app-metrics
+            token: ${{ secrets.REPO_TOKEN }}
+            ref: live
+            submodules: true  # Fetch Hugo themes
+            fetch-depth: 0    # Fetch all history for .GitInfo and .Lastmod
+
+      # Step 2 - Sets up the latest version of Hugo
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v2
+        with:
+            hugo-version: '0.110.0'
+            
+      # Also specifies the theme we want to use
+      - name: Build
+        run: hugo --config "./config/groupdocs-app-live.toml" --minify
+        
+      - name: Deploy metrics.groupdocs.app
+        run: hugo --config "./config/groupdocs-app-live.toml" deploy --target "Production" --invalidateCDN --maxDeletes 256 
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.SECRET_ACCESS }}
+          
+   
