@@ -7,7 +7,7 @@ on:
   workflow_dispatch: 
   # Scheduled trigger
   schedule:
-    - cron: '55 */3 * * *'
+    - cron: '30 */4 * * *'
   
   #push:
     #branches: [ main ]
