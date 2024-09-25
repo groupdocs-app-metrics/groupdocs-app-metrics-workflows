@@ -42,7 +42,7 @@ jobs:
             
       # Also specifies the theme we want to use
       - name: Build
-        run: hugo --config "./config/groupdocs-app-qa.toml" --minify
+        run: hugo --config "./config/groupdocs-app-qa.toml" --cleanDestinationDir --ignoreCache --minify
         
       - name: Deploy qa-metrics.groupdocs.app
         run: hugo --config "./config/groupdocs-app-qa.toml" deploy --target "Staging" --invalidateCDN --maxDeletes 256 
